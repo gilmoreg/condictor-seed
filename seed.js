@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const faker = require('faker');
 const readline = require('readline');
 const schemas = require('./schemas');
+require('dotenv').config();
 
 mongoose.Promise = global.Promise;
 
@@ -158,7 +159,7 @@ function createComments(uids, tids, num) {
 }
 
 function seed() {
-  mongoose.connect('mongodb://localhost/condictor', (err) => {
+  mongoose.connect(process.env.MONGODB_URL, (err) => {
     if (err) return onErr(err);
     dropDatabase().then(() => {
       console.log('db dropped');
@@ -194,7 +195,7 @@ const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
-rl.question('Running this script will DESTROY existing data. Type "yes" to continue.', (answer) => {
+rl.question('Running this script will DESTROY existing data. Type "yes" to continue.\n', (answer) => {
   rl.close();
   if (answer === 'yes') seed();
   else {
