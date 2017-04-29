@@ -3,7 +3,7 @@
 Used to fill test data for [condictor-backend](https://github.com/gilmoreg/condictor-backend).
 
 Instructions:
-- Clone into repo
+- Clone repo and cd into project
 - npm install
 - Create a .env file like:
 ````
