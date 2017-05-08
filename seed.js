@@ -4,10 +4,30 @@
 const mongoose = require('mongoose');
 const faker = require('faker');
 const readline = require('readline');
+const fetch = require('node-fetch');
 const schemas = require('./schemas');
 require('dotenv').config();
 
 mongoose.Promise = global.Promise;
+
+const comments = [
+  'I\'m on it!',
+  'Checking this out.',
+  'Let me handle this one.',
+  'Reached out to the consumer for more info.',
+  'The next version should solve this issue.',
+  'Checked with engineering for a possible fix. Waiting to hear back.',
+  'I think I have a fix documented somewhere. I\'ll get back to this asap.'
+];
+
+const descriptions = [
+  'Consumer lost the product manual.',
+  'Consumer has a feature suggestion',
+  'Consumer needs replacement parts.',
+  'Consumer needs clarification on assembly/install instructions.',
+  'Feature x is not functioning properly for this consumer.',
+  'Consumer wants a time estimate on next version'
+];
 
 function onErr(err) {
   console.error(err);
@@ -97,12 +117,12 @@ function addProductsToConsumers(pids, cids) {
 function generateTicket(owner, consumer, product) {
   return new Promise((resolve, reject) => {
     const ticket = {
-      description: faker.lorem.paragraph(),
+      description: randomElement(descriptions),
       product,
       consumer,
       owner,
       created: Date.now() - 100000,
-      closed: Date.now(),
+      closed: (Math.random() > 0.5) ? Date.now() : null,
       priority: Math.floor(Math.random() * 5) + 1,
       comments: [],
     };
@@ -139,7 +159,7 @@ function createComments(uids, tids, num) {
       const comment = {
         owner: user,
         created: Date.now(),
-        description: faker.lorem.paragraph(),
+        description: randomElement(comments),
       };
       const promise = schemas
         .Comment
@@ -175,6 +195,17 @@ function seed() {
                 createComments(uids, tids, 10).then(() => {
                   console.log('New data seeded in database.');
                   mongoose.disconnect();
+                  // Create demo account
+                  fetch(`${process.env.API_URL}/signup`, {
+                    headers: {
+                      Accept: 'application/json',
+                      'Content-Type': 'application/json',
+                    },
+                    method: 'post',
+                    body: JSON.stringify({ username: 'test', password: 'test' }), 
+                  })
+                  .then(() => console.log('Demo user created. All done.'))
+                  .catch(err => console.log('Error creating demo user.', err));
                 });
               });
             });

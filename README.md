@@ -8,5 +8,6 @@ Instructions:
 - Create a .env file like:
 ````
 MONGODB_URL=mongodb://<username>:<password>@<url>:<port>/condictor
+API_URL=http://<condictor-backend-url>
 ````
 - npm start
